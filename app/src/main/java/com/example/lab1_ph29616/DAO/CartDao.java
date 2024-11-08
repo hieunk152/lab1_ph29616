@@ -1,4 +1,4 @@
-package com.example.lab1_ph29616;
+package com.example.lab1_ph29616.DAO;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,8 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 
+import com.example.lab1_ph29616.DTO.CatDTO;
+import com.example.lab1_ph29616.DB_Helper.MyDBHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CartDao  {
     MyDBHelper dbHelper;
@@ -78,4 +81,35 @@ public class CartDao  {
         db.close();
         return null; // Trả về null nếu không tìm thấy
     }
+    //Lấy ra các id_cat
+    public ArrayList<Integer> getAllProductCategoryIds() {
+        ArrayList<Integer> categoryIds = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            // Truy vấn chỉ lấy ra cột id_cat từ bảng tb_product
+            cursor = db.query(
+                    "tb_product",               // Tên bảng
+                    new String[]{"id_cat"},      // Các cột cần lấy (ở đây chỉ lấy cột id_cat)
+                    null,                        // Mệnh đề WHERE (không có điều kiện lọc)
+                    null,                        // Tham số cho WHERE (không cần vì không có điều kiện)
+                    null,                        // GROUP BY
+                    null,                        // HAVING
+                    null                         // ORDER BY
+            );
+            // Duyệt qua các kết quả và thêm vào danh sách categoryIds
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    int idCat = cursor.getInt(Integer.valueOf(cursor.getColumnIndex("id_cat")));
+                    categoryIds.add(idCat);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return categoryIds;
+    }
+
 }

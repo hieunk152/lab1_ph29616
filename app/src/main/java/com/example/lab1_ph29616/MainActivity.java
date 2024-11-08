@@ -1,6 +1,7 @@
 package com.example.lab1_ph29616;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,18 +16,22 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.lab1_ph29616.Adapter.CartAdapter;
+import com.example.lab1_ph29616.DAO.CartDao;
+import com.example.lab1_ph29616.DAO.ProductDao;
+import com.example.lab1_ph29616.DTO.CatDTO;
+import com.example.lab1_ph29616.DTO.Product;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     CartDao catDAO;
     ArrayList<CatDTO> listCat;
     ListView lvCat;
-    Button btnAdd, btnUpdate, btnDelete;
+    Button btnAdd, btnUpdate, btnDelete, btnProduct;
     EditText edCatName;
     CatDTO objCurrentCat = null;
     CartAdapter adapter;
-    int _index ;
-    String TAG = "zzzzzzz";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +42,21 @@ public class MainActivity extends AppCompatActivity {
         btnAdd = findViewById(R.id.btn_add);
         btnUpdate = findViewById(R.id.btn_update);
         btnDelete = findViewById(R.id.btn_delete);
+        btnProduct = findViewById(R.id.btn_pass_product_activity);
         edCatName = findViewById(R.id.ed_catname);
         // Tao doi tuong
         catDAO = new CartDao(this);
         listCat = catDAO.getList();
+        ArrayList<Integer> id_categoryFromTbProduct = catDAO.getAllProductCategoryIds();
         reload();
 
+        btnProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,Product_Activity.class);
+                startActivity(intent);
+            }
+        });
         // ghi vao CSDL
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         objCurrentCat = listCat.get(position);
-                        Log.d(TAG, "obj: "+objCurrentCat.getName());
 
                         //lay du lieu
                         String catName = edCatName.getText().toString();
@@ -102,13 +115,24 @@ public class MainActivity extends AppCompatActivity {
                                 .setPositiveButton("Có", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        boolean res = catDAO.deleteRow(listCat.get(position).getId());
-                                        if (res) {
-                                            listCat.remove(position);
-                                            adapter.notifyDataSetChanged();
-                                            edCatName.setText("");
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "Lỗi không xóa được, có thể trùng dữ liệu", Toast.LENGTH_SHORT).show();
+                                        boolean found = false;
+                                        for (int id_cat:id_categoryFromTbProduct) {
+                                            Log.d("zzz", "id_tb_cat: "+listCat.get(position).getId() +" and "+ "id_tb_product "+id_cat);
+                                            if(listCat.get(position).getId() == id_cat){
+                                                Toast.makeText(MainActivity.this, "Danh muc đang thuộc một sản phẩm, Vui lòng kiểm tra lại.", Toast.LENGTH_SHORT).show();
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                        if(!found){
+                                            boolean res = catDAO.deleteRow(listCat.get(position).getId());
+                                            if (res) {
+                                                listCat.remove(position);
+                                                adapter.notifyDataSetChanged();
+                                                edCatName.setText("");
+                                            } else {
+                                                Toast.makeText(MainActivity.this, "Lỗi không xóa được, có thể trùng dữ liệu", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     }
                                 })
@@ -120,14 +144,11 @@ public class MainActivity extends AppCompatActivity {
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert) // Thêm icon nếu cần
                                 .show();
-
-
                     }
                 });
                 return true;
             }
         });
-
     }
     public void reload(){
         adapter = new CartAdapter(this, listCat);

@@ -1,4 +1,4 @@
-package com.example.lab1_ph29616;
+package com.example.lab1_ph29616.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+
+import com.example.lab1_ph29616.DTO.CatDTO;
+import com.example.lab1_ph29616.R;
 
 import java.util.ArrayList;
 

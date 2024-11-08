@@ -1,4 +1,4 @@
-package com.example.lab1_ph29616;
+package com.example.lab1_ph29616.DTO;
 
 public class CatDTO {
     public CatDTO() {
@@ -6,6 +6,10 @@ public class CatDTO {
 
     public CatDTO(int id, String name) {
         this.id = id;
+        this.name = name;
+    }
+
+    public CatDTO(String name) {
         this.name = name;
     }
 
