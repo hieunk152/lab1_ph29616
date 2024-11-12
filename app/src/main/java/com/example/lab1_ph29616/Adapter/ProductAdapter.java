@@ -56,7 +56,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(ProductViewHolder holder, @SuppressLint("RecyclerView") int position) {
         // Lấy dữ liệu cho từng item
         Product product = productList.get(position);
-
         // Gán dữ liệu vào view
         holder.productSTT.setText(String.valueOf(position+1)); // Sửa lỗi này
         holder.productName.setText("Name: "+product.getName());

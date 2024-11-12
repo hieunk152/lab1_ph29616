@@ -52,7 +52,7 @@ public class CartAdapter extends BaseAdapter {
         TextView tvId = row.findViewById(R.id.tv_id);
         TextView tvName = row.findViewById(R.id.tv_name);
 
-        tvId.setText(objCat.getId() + "");
+        tvId.setText(i+1 + "");
         tvName.setText(objCat.getName());
 
         return row;
